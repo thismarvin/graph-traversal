@@ -42,7 +42,6 @@ function mousePressed() {
 
     if (!collided) {
         vertices.push(new Vertex(mouseX, mouseY, vertices.length + 1));
-        vertices.sort(function (a, b) { return b.y - a.y });
     }
 }
 
@@ -58,32 +57,65 @@ function keyPressed() {
     }
     // Enter
     if (keyCode === 13) {
-        depthFirstSearch();
+        graphTraversal("DFS");
         displayDepthSearch = true;
     }
 }
 
-function depthFirstSearch() {
-    let stack = [];
+function graphTraversal(type) {
+    let structure = [];
+    let parents = [];
     let explored = [];
-    stack.push(vertices[0]);
-    while (stack.length > 0) {
-        let vertex = stack.pop();
+    let vertex = null;
+    let parent = null;
+
+    structure.push(vertices[0]);
+    parents.push(null);
+
+    while (structure.length > 0) {
+        switch (type) {
+            case "DFS":
+                vertex = structure.pop();
+                parent = parents.pop();
+                break;
+            case "BFS":
+                vertex = structure.shift();
+                parent = parents.shift();
+                break;
+        }
         if (!explored.includes(vertex)) {
-            if (vertex.parent != null){
-                vertex.linkSearch(vertex.parent);
-            }
             explored.push(vertex);
+            if (parent != null) {
+                console.log(parent);
+                vertex.linkSearch(getVertex(parent));
+            }
             for (let neighbor of vertex.neighbors) {
                 neighbor.parent = vertex;
-                stack.push(neighbor);
+                structure.push(neighbor);
+                parents.push(vertex.index);
             }
         }
     }
+
+    /*for (let i = 0; i < parents.length; i++){
+        explored[i + 1].linkSearch(getVertex(parents[i]));
+    }*/
+}
+
+function getVertex(number) {
+    for (let vertex of vertices) {
+        if (vertex.index === number) {
+            return vertex;
+        }
+    }
+    return null;
 }
 
 function draw() {
     background(255);
+    for (let vertex of vertices) {
+        vertex.drawLines();
+    }
     for (let vertex of vertices) {
         vertex.show();
     }

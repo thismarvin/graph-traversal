@@ -26,8 +26,14 @@ class Vertex {
         this.search.push(vertex);
     }
 
-    show() {
-        stroke(0);
+    drawLines(){
+        if (!displayDepthSearch){
+            stroke(0);
+        }
+        else{
+            stroke(0,0,0,50);
+        }
+        
         strokeWeight(3);
         for (let neighbor of this.neighbors) {
             line(this.x, this.y, neighbor.x, neighbor.y);
@@ -38,7 +44,10 @@ class Vertex {
         for (let so of this.search) {
             line(this.x, this.y, so.x, so.y);
         }
+    }
 
+    show() {
+        
         stroke(0);
         strokeWeight(3);
         if (this.selected) {
@@ -54,6 +63,6 @@ class Vertex {
         textAlign(CENTER);
         textSize(20);
         textFont('cursive');
-        text(this.index, this.x, this.y + 5);
+        text(this.index, this.x, this.y + 6);
     }
 }
