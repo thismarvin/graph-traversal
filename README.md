@@ -1,2 +1,2 @@
 # graph-traversal
-a visualization of Depth and Bredth First Search
+a visualization of Depth and Breadth First Search
