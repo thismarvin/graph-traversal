@@ -1,53 +1,46 @@
-
 class Vertex {
     constructor(x, y, index) {
         this.x = x;
         this.y = y;
         this.index = index;
         this.radius = 40;
-
-        this.neighbors = [];
-        this.parent = null;
-
         this.selected = false;
-
-        this.search = [];
+        this.neighbors = [];  
+        this.traversal = [];
     }
 
     linkToVertex(vertex) {
         if (!this.neighbors.includes(vertex)) {
             this.neighbors.push(vertex);
             this.neighbors.sort(function (a, b) { return a.index - b.index });
-            //console.log(this.neighbors);
         }
     }
 
     linkSearch(vertex) {
-        this.search.push(vertex);
+        this.traversal.push(vertex);
     }
 
-    drawLines(){
-        if (!displayDepthSearch){
+    drawLines() {
+        if (!displayTraversal) {
             stroke(0);
         }
-        else{
-            stroke(0,0,0,50);
+        else {
+            stroke(0, 0, 0, 50);
         }
-        
+
         strokeWeight(3);
-        for (let neighbor of this.neighbors) {
-            line(this.x, this.y, neighbor.x, neighbor.y);
+        for (let edge of this.neighbors) {
+            line(this.x, this.y, edge.x, edge.y);
         }
 
         stroke(222, 0, 0);
         strokeWeight(6);
-        for (let so of this.search) {
-            line(this.x, this.y, so.x, so.y);
+        for (let edge of this.traversal) {
+            line(this.x, this.y, edge.x, edge.y);
         }
     }
 
     show() {
-        
         stroke(0);
         strokeWeight(3);
         if (this.selected) {

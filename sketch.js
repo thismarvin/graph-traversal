@@ -3,8 +3,7 @@ let mouseCollision;
 let vertices;
 let selectedVertex;
 let isVertexSelected;
-
-let displayDepthSearch;
+let displayTraversal;
 
 function setup() {
     createCanvas(displayWidth, displayHeight);
@@ -12,30 +11,30 @@ function setup() {
     vertices = [];
     selectedVertex = null;
     isVertexSelected = false;
-
-    search = [];
-    displayDepthSearch = false;
+    displayTraversal = false;
 }
 
 function mousePressed() {
     this.mouseCollision.setLocation(mouseX, mouseY);
+    selectVertices();
+}
+
+function selectVertices(){
     let collided = false;
     for (let vertex of vertices) {
         if (mouseCollidesWithVertex(vertex)) {
             collided = true;
             if (!isVertexSelected) {
                 selectedVertex = vertex;
-                selectedVertex.selected = true;
-                isVertexSelected = true;
             }
             else {
                 if (!(vertex === selectedVertex)) {
                     selectedVertex.linkToVertex(vertex);
                     vertex.linkToVertex(selectedVertex);
-                    selectedVertex.selected = false;
-                    isVertexSelected = false;
                 }
             }
+            selectedVertex.selected = !selectedVertex.selected;
+            isVertexSelected = !isVertexSelected;
             break;
         }
     }
@@ -58,57 +57,38 @@ function keyPressed() {
     // Enter
     if (keyCode === 13) {
         graphTraversal("DFS");
-        displayDepthSearch = true;
+        displayTraversal = true;
     }
 }
 
 function graphTraversal(type) {
     let structure = [];
-    let parents = [];
     let explored = [];
     let vertex = null;
-    let parent = null;
 
-    structure.push(vertices[0]);
-    parents.push(null);
+    structure.push([vertices[0], null]);
 
     while (structure.length > 0) {
         switch (type) {
             case "DFS":
                 vertex = structure.pop();
-                parent = parents.pop();
                 break;
             case "BFS":
                 vertex = structure.shift();
-                parent = parents.shift();
                 break;
         }
-        if (!explored.includes(vertex)) {
-            explored.push(vertex);
-            if (parent != null) {
-                console.log(parent);
-                vertex.linkSearch(getVertex(parent));
+
+        if (!explored.includes(vertex[0])) {
+            explored.push(vertex[0]);
+            if (vertex[1] != null) {
+                vertex[0].linkSearch(vertex[1]);
             }
-            for (let neighbor of vertex.neighbors) {
-                neighbor.parent = vertex;
-                structure.push(neighbor);
-                parents.push(vertex.index);
+            for (let neighbor of vertex[0].neighbors) {
+                neighbor.parent = vertex[1];
+                structure.push([neighbor, vertex[0]]);
             }
         }
     }
-
-    /*for (let i = 0; i < parents.length; i++){
-        explored[i + 1].linkSearch(getVertex(parents[i]));
-    }*/
-}
-
-function getVertex(number) {
-    for (let vertex of vertices) {
-        if (vertex.index === number) {
-            return vertex;
-        }
-    }
-    return null;
 }
 
 function draw() {
