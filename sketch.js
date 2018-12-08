@@ -7,9 +7,12 @@ let displayTraversal;
 
 let showShortestPath;
 
+let mode;
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
     this.mouseCollision = new Rectangle(0, 0, 1, 1);
+    mode = 0;
     reset();
 }
 
@@ -173,5 +176,30 @@ function draw() {
     for (let vertex of vertices) {
         vertex.show();
     }
+
+    fill(255);
+    noStroke();
+    rect(0, 0, windowWidth, 32);
+
+    textFont('sans-serif');
+    textAlign(LEFT);
+    textSize(12);
+
+    fill(0);
+    if (mode === 0) {
+        fill(255, 0, 77);
+    }
+    text("Breadth First Search", 32, 20);
+    fill(0);
+    if (mode === 1) {
+        fill(255, 0, 77);
+    }
+    text("Depth First Search", 32 + textWidth('Breadth First Search') + 32, 20);
+    fill(0);
+    if (mode === 2) {
+        fill(255, 0, 77);
+    }
+    text("Dijkstra's Algorithm", 32 + textWidth('Breadth First Search') + 32 + textWidth('Depth First Search') + 32, 20);
+
 }
 
