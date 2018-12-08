@@ -8,16 +8,23 @@ let displayTraversal;
 let showShortestPath;
 
 function setup() {
-    createCanvas(displayWidth, displayHeight);
+    createCanvas(windowWidth, windowHeight);
     this.mouseCollision = new Rectangle(0, 0, 1, 1);
+    reset();
+}
+
+function reset() {
     vertices = [];
     selectedVertex = null;
     isVertexSelected = false;
     displayTraversal = false;
+    showShortestPath = false;
 }
 
 function mousePressed() {
     this.mouseCollision.setLocation(mouseX, mouseY);
+    displayTraversal = false;
+    resetVertices();
     selectVertices();
 }
 
@@ -54,14 +61,20 @@ function mouseCollidesWithVertex(vertex) {
 function keyPressed() {
     // Space
     if (keyCode === 32) {
-        vertices = [];
-        showShortestPath = false;
+        reset();
     }
     // Enter
     if (keyCode === 13) {
         //graphTraversal("BFS");
+        createRandomGraph();
         dijktras();
-        Traversal = true;
+        displayTraversal = true;
+    }
+}
+
+function resetVertices() {
+    for (let vertex of vertices) {
+        vertex.reset();
     }
 }
 
@@ -127,21 +140,32 @@ function vertexWithShortestDistance(unvisited) {
     return min;
 }
 
-function lastVertex(){
-    return vertices.length;
+function createRandomGraph() {
+    vertices = [];
+    let total = 5 + floor(Math.random() * 5);
+    for (let i = 0; i < total; i++) {
+        vertices.push(new Vertex(floor(Math.random() * (windowWidth - 200)) + 100, floor(Math.random() * (windowHeight - 200)) + 100, i + 1));
+    }
+    for (let i = 0; i < total; i++) {
+        let target = floor(Math.random() * (total - 1));
+        vertices[i].linkToVertex(vertices[target]);
+        vertices[target].linkToVertex(vertices[i]);
+    }
 }
 
 function draw() {
-    background(255);
+    background(222, 224, 229);
     for (let vertex of vertices) {
         vertex.drawLines();
     }
 
     if (showShortestPath) {
-        stroke(0, 0, 222);
+        stroke(0);
+        strokeWeight(6)
         let solution = vertices[vertices.length - 1];
         while (solution.previous != null) {
             line(solution.x, solution.y, solution.previous.x, solution.previous.y);
+            solution.partOfSolution = true;
             solution = solution.previous;
         }
     }
