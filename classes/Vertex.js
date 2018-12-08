@@ -52,7 +52,8 @@ class Vertex {
     show() {
         stroke(0);
         strokeWeight(4);
-        if (this.index === 1 || this.index === vertices.length) {
+        if (((mode === 0 || mode === 1) && (this.index === 1)) ||
+            mode === 2 && (this.index === 1 || this.index === vertices.length)) {
             this.radius = 60;
             if (this.selected) {
                 fill(150);
