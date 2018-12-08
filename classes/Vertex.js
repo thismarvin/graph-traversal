@@ -3,13 +3,17 @@ class Vertex {
         this.x = x;
         this.y = y;
         this.index = index;
-        this.radius = 40;
+        this.radius = 0;
         this.selected = false;
         this.neighbors = [];
-        this.traversal = [];
-
         this.distance = 0;
+        this.reset();
+    }
+
+    reset(){          
+        this.traversal = [];    
         this.previous = null;
+        this.partOfSolution = false;
     }
 
     linkToVertex(vertex) {
@@ -31,49 +35,50 @@ class Vertex {
             stroke(0, 0, 0, 50);
         }
 
-        strokeWeight(3);
+        strokeWeight(4);
         for (let edge of this.neighbors) {
             line(this.x, this.y, edge.x, edge.y);
         }
 
-        stroke(222, 0, 0);
+        //stroke(222, 0, 0);
         strokeWeight(6);
         for (let edge of this.traversal) {
             line(this.x, this.y, edge.x, edge.y);
         }
-
-        /*if (this.previous != null) {
-            stroke(0, 0, 222);
-            strokeWeight(6);
-            line(this.x, this.y, this.previous.x, this.previous.y);
-        }*/
     }
 
     show() {
         stroke(0);
-        strokeWeight(3);
-        if (this.index == 1 || this.index == lastVertex()){
-            this.radius = 50;
-            textSize(22);
-        }
-        else{        
-            this.radius = 40;
-            textSize(20);
-        }
-
-        if (this.selected) {
-            fill(100);
+        strokeWeight(4);
+        if (this.index === 1 || this.index === vertices.length) {
+            this.radius = 60;
+            if (this.selected) {
+                fill(222);
+            }
+            else {
+                fill(255, 0, 77);
+            }
         }
         else {
-            fill(255);
+            this.radius = 50;
+            if (this.selected) {
+                fill(222);
+            }
+            else {
+                fill(255);
+            }
+            if (this.partOfSolution) {
+                fill(255, 119, 168);
+            }
         }
+
         ellipse(this.x, this.y, this.radius);
 
         noStroke();
         fill(0);
         textAlign(CENTER);
-       
         textFont('cursive');
+        textSize(20);
         text(this.index, this.x, this.y + 6);
     }
 }
