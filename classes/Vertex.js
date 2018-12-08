@@ -10,8 +10,8 @@ class Vertex {
         this.reset();
     }
 
-    reset(){          
-        this.traversal = [];    
+    reset() {
+        this.traversal = [];
         this.previous = null;
         this.partOfSolution = false;
     }
@@ -40,10 +40,12 @@ class Vertex {
             line(this.x, this.y, edge.x, edge.y);
         }
 
-        //stroke(222, 0, 0);
-        strokeWeight(6);
-        for (let edge of this.traversal) {
-            line(this.x, this.y, edge.x, edge.y);
+        if (displayTraversal) {
+            stroke(222, 0, 0);
+            strokeWeight(6);
+            for (let edge of this.traversal) {
+                line(this.x, this.y, edge.x, edge.y);
+            }
         }
     }
 
@@ -53,7 +55,7 @@ class Vertex {
         if (this.index === 1 || this.index === vertices.length) {
             this.radius = 60;
             if (this.selected) {
-                fill(222);
+                fill(150);
             }
             else {
                 fill(255, 0, 77);
@@ -62,7 +64,7 @@ class Vertex {
         else {
             this.radius = 50;
             if (this.selected) {
-                fill(222);
+                fill(150);
             }
             else {
                 fill(255);
@@ -79,6 +81,6 @@ class Vertex {
         textAlign(CENTER);
         textFont('cursive');
         textSize(20);
-        text(this.index, this.x, this.y + 6);
+        //text(this.index, this.x, this.y + 6);
     }
 }
