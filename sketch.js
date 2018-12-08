@@ -4,9 +4,7 @@ let vertices;
 let selectedVertex;
 let isVertexSelected;
 let displayTraversal;
-
 let showShortestPath;
-
 let mode;
 let topBar;
 let breadthCollision;
@@ -41,21 +39,9 @@ function mousePressed() {
     displayTraversal = false;
 
     if (this.mouseCollision.intersects(this.topBar)) {
-        if (this.mouseCollision.intersects(this.breadthCollision)) {
-            selectMode(0);
-        }
-        if (this.mouseCollision.intersects(this.depthCollision)) {
-            selectMode(1);
-        }
-        if (this.mouseCollision.intersects(this.dijkstraCollision)) {
-            selectMode(2);
-        }
-        if (this.mouseCollision.intersects(this.resetCollision)) {
-            reset();
-        }
+        selectButton();
     }
     else {
-        resetVertices();
         selectVertices();
     }
 }
@@ -81,7 +67,23 @@ function selectMode(next) {
     displayTraversal = true;
 }
 
+function selectButton() {
+    if (this.mouseCollision.intersects(this.breadthCollision)) {
+        selectMode(0);
+    }
+    if (this.mouseCollision.intersects(this.depthCollision)) {
+        selectMode(1);
+    }
+    if (this.mouseCollision.intersects(this.dijkstraCollision)) {
+        selectMode(2);
+    }
+    if (this.mouseCollision.intersects(this.resetCollision)) {
+        reset();
+    }
+}
+
 function selectVertices() {
+    resetVertices();
     let collided = false;
     for (let vertex of vertices) {
         if (mouseCollidesWithVertex(vertex)) {
@@ -242,12 +244,13 @@ function createCompleteGraph(order) {
     }
 }
 
-function draw() {
-    background(222, 224, 229);
+function drawEdges() {
     for (let vertex of vertices) {
         vertex.drawLines();
     }
+}
 
+function drawPath() {
     if (showShortestPath) {
         stroke(222, 0, 0);
         strokeWeight(6)
@@ -258,11 +261,15 @@ function draw() {
             solution = solution.previous;
         }
     }
+}
 
+function drawVertices() {
     for (let vertex of vertices) {
         vertex.show();
     }
+}
 
+function drawUI() {
     fill(255);
     noStroke();
     this.topBar.show();
@@ -290,3 +297,10 @@ function draw() {
     text("Reset", 32 + textWidth('Breadth First Search') + 32 + textWidth('Depth First Search') + 32 + textWidth('Dijkstra\'s Algorithm') + 32, 20);
 }
 
+function draw() {
+    background(222, 224, 229);
+    drawEdges();
+    drawPath();
+    drawVertices();
+    drawUI();
+}
