@@ -5,8 +5,11 @@ class Vertex {
         this.index = index;
         this.radius = 40;
         this.selected = false;
-        this.neighbors = [];  
+        this.neighbors = [];
         this.traversal = [];
+
+        this.distance = 0;
+        this.previous = null;
     }
 
     linkToVertex(vertex) {
@@ -38,11 +41,26 @@ class Vertex {
         for (let edge of this.traversal) {
             line(this.x, this.y, edge.x, edge.y);
         }
+
+        /*if (this.previous != null) {
+            stroke(0, 0, 222);
+            strokeWeight(6);
+            line(this.x, this.y, this.previous.x, this.previous.y);
+        }*/
     }
 
     show() {
         stroke(0);
         strokeWeight(3);
+        if (this.index == 1 || this.index == lastVertex()){
+            this.radius = 50;
+            textSize(22);
+        }
+        else{        
+            this.radius = 40;
+            textSize(20);
+        }
+
         if (this.selected) {
             fill(100);
         }
@@ -54,7 +72,7 @@ class Vertex {
         noStroke();
         fill(0);
         textAlign(CENTER);
-        textSize(20);
+       
         textFont('cursive');
         text(this.index, this.x, this.y + 6);
     }
