@@ -22,7 +22,7 @@ function setup() {
     this.depthCollision = new Rectangle(64 + textWidth('Breadth First Search'), 0, textWidth('Depth First Search'), 32);
     this.dijkstraCollision = new Rectangle(96 + textWidth('Breadth First Search') + textWidth('Depth First Search'), 0, textWidth('Dijkstra\'s Algorithm'), 32);
     this.resetCollision = new Rectangle(128 + textWidth('Breadth First Search') + textWidth('Depth First Search') + textWidth('Dijkstra\'s Algorithm'), 0, textWidth('Reset'), 32);
-    mode = 0;
+    mode = -1;
     reset();
     createCompleteGraph(8);
 }
