@@ -8,10 +8,18 @@ let displayTraversal;
 let showShortestPath;
 
 let mode;
+let topBar;
+let breadthCollision;
+let depthCollision;
+let dijkstraCollision;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
     this.mouseCollision = new Rectangle(0, 0, 1, 1);
+    this.topBar = new Rectangle(0, 0, windowWidth, 32);
+    this.breadthCollision = new Rectangle(32, 12, textWidth('Breadth First Search'), 20);
+    this.depthCollision = new Rectangle(64 + textWidth('Breadth First Search'), 12, textWidth('Depth First Search'), 20);
+    this.dijkstraCollision = new Rectangle(96 + textWidth('Breadth First Search') + textWidth('Depth First Search'), 12, textWidth('Dijkstra\'s Algorithm'), 20);
     mode = 0;
     reset();
 }
@@ -27,8 +35,43 @@ function reset() {
 function mousePressed() {
     this.mouseCollision.setLocation(mouseX, mouseY);
     displayTraversal = false;
+
+    if (this.mouseCollision.intersects(this.topBar)) {
+        if (this.mouseCollision.intersects(this.breadthCollision)) {
+            selectMode(0);
+        }
+        if (this.mouseCollision.intersects(this.depthCollision)) {
+            selectMode(1);
+        }
+        if (this.mouseCollision.intersects(this.dijkstraCollision)) {
+            selectMode(2);
+        }
+    }
+    else {
+        resetVertices();
+        selectVertices();
+    }
+}
+
+function selectMode(next) {
+    mode = next;
+    if (vertices.length === 0){
+        return;
+    }
+      
     resetVertices();
-    selectVertices();
+    switch (mode) {
+        case 0:
+            graphTraversal("BFS");
+            break;
+        case 1:
+            graphTraversal("DFS");
+            break;
+        case 2:
+            dijkstras();
+            break;
+    }
+    displayTraversal = true;
 }
 
 function selectVertices() {
@@ -70,7 +113,7 @@ function keyPressed() {
     if (keyCode === 13) {
         //graphTraversal("BFS");
         createRandomGraph();
-        dijktras();
+        //dijkstras();
         displayTraversal = true;
     }
 }
@@ -111,7 +154,11 @@ function graphTraversal(type) {
     }
 }
 
-function dijktras() {
+function dijkstras() {
+    if (vertices.count == 0) {
+        return;
+    }
+
     unvisited = [];
     for (let vertex of vertices) {
         vertex.distance = Number.MAX_SAFE_INTEGER;
@@ -163,7 +210,7 @@ function draw() {
     }
 
     if (showShortestPath) {
-        stroke(0);
+        stroke(222, 0, 0);
         strokeWeight(6)
         let solution = vertices[vertices.length - 1];
         while (solution.previous != null) {
@@ -179,7 +226,7 @@ function draw() {
 
     fill(255);
     noStroke();
-    rect(0, 0, windowWidth, 32);
+    this.topBar.show();
 
     textFont('sans-serif');
     textAlign(LEFT);
@@ -200,6 +247,5 @@ function draw() {
         fill(255, 0, 77);
     }
     text("Dijkstra's Algorithm", 32 + textWidth('Breadth First Search') + 32 + textWidth('Depth First Search') + 32, 20);
-
 }
 
