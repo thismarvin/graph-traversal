@@ -12,19 +12,23 @@ let topBar;
 let breadthCollision;
 let depthCollision;
 let dijkstraCollision;
+let resetCollision;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
     this.mouseCollision = new Rectangle(0, 0, 1, 1);
     this.topBar = new Rectangle(0, 0, windowWidth, 32);
-    this.breadthCollision = new Rectangle(32, 12, textWidth('Breadth First Search'), 20);
-    this.depthCollision = new Rectangle(64 + textWidth('Breadth First Search'), 12, textWidth('Depth First Search'), 20);
-    this.dijkstraCollision = new Rectangle(96 + textWidth('Breadth First Search') + textWidth('Depth First Search'), 12, textWidth('Dijkstra\'s Algorithm'), 20);
+    this.breadthCollision = new Rectangle(32, 0, textWidth('Breadth First Search'), 32);
+    this.depthCollision = new Rectangle(64 + textWidth('Breadth First Search'), 0, textWidth('Depth First Search'), 32);
+    this.dijkstraCollision = new Rectangle(96 + textWidth('Breadth First Search') + textWidth('Depth First Search'), 0, textWidth('Dijkstra\'s Algorithm'), 32);
+    this.resetCollision = new Rectangle(128 + textWidth('Breadth First Search') + textWidth('Depth First Search') + textWidth('Dijkstra\'s Algorithm'), 0, textWidth('Reset'), 32);
     mode = 0;
     reset();
+    createCompleteGraph(8);
 }
 
 function reset() {
+    mode = -1;
     vertices = [];
     selectedVertex = null;
     isVertexSelected = false;
@@ -46,6 +50,9 @@ function mousePressed() {
         if (this.mouseCollision.intersects(this.dijkstraCollision)) {
             selectMode(2);
         }
+        if (this.mouseCollision.intersects(this.resetCollision)) {
+            reset();
+        }
     }
     else {
         resetVertices();
@@ -55,10 +62,10 @@ function mousePressed() {
 
 function selectMode(next) {
     mode = next;
-    if (vertices.length === 0){
+    if (vertices.length === 0) {
         return;
     }
-      
+
     resetVertices();
     switch (mode) {
         case 0:
@@ -111,10 +118,23 @@ function keyPressed() {
     }
     // Enter
     if (keyCode === 13) {
-        //graphTraversal("BFS");
         createRandomGraph();
-        //dijkstras();
-        displayTraversal = true;
+    }
+    // 1
+    if (keyCode == 49) {
+        selectMode(0);
+    }
+    // 2
+    if (keyCode == 50) {
+        selectMode(1);
+    }
+    // 3
+    if (keyCode == 51) {
+        selectMode(2);
+    }
+    // 4
+    if (keyCode == 52) {
+        reset();
     }
 }
 
@@ -203,6 +223,25 @@ function createRandomGraph() {
     }
 }
 
+function createCompleteGraph(order) {
+    let center = createVector(windowWidth / 2, windowHeight / 2);
+    let theta = 0;
+    let increment = Math.PI * 2 / order;
+    let radius = windowHeight * 0.75 * 0.5;
+    if (windowWidth < windowHeight) {
+        radius = windowWidth * 0.75 * 0.5;
+    }
+
+    for (let i = 0; i < order; i++) {
+        vertices.push(new Vertex(center.x + Math.cos(theta) * radius, center.y + Math.sin(theta) * radius, i + 1));
+        theta += increment;
+        for (let j = 0; j < vertices.length; j++) {
+            vertices[j].linkToVertex(vertices[vertices.length - 1]);
+            vertices[vertices.length - 1].linkToVertex(vertices[j]);
+        }
+    }
+}
+
 function draw() {
     background(222, 224, 229);
     for (let vertex of vertices) {
@@ -247,5 +286,7 @@ function draw() {
         fill(255, 0, 77);
     }
     text("Dijkstra's Algorithm", 32 + textWidth('Breadth First Search') + 32 + textWidth('Depth First Search') + 32, 20);
+    fill(0);
+    text("Reset", 32 + textWidth('Breadth First Search') + 32 + textWidth('Depth First Search') + 32 + textWidth('Dijkstra\'s Algorithm') + 32, 20);
 }
 
