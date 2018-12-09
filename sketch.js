@@ -12,6 +12,11 @@ let depthCollision;
 let dijkstraCollision;
 let resetCollision;
 
+let startIndex;
+let endIndex;
+let modifyStartPoint;
+let modifyEndPoint;
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
     this.mouseCollision = new Rectangle(0, 0, 1, 1);
@@ -32,6 +37,10 @@ function reset() {
     isVertexSelected = false;
     displayTraversal = false;
     showShortestPath = false;
+    modifyStartPoint = false;
+    modifyEndPoint = false;
+    startIndex = 0;
+    endIndex = 0;
 }
 
 function mousePressed() {
@@ -90,11 +99,37 @@ function selectVertices() {
             collided = true;
             if (!isVertexSelected) {
                 selectedVertex = vertex;
+                if (modifyStartPoint) {
+                    startIndex = vertex.index - 1;
+                    modifyStartPoint = false;
+                    selectedVertex.selected = !selectedVertex.selected;
+                    isVertexSelected = !isVertexSelected;
+                }
+                if (modifyEndPoint) {
+                    endIndex = vertex.index - 1;
+                    modifyEndPoint = false;
+                    selectedVertex.selected = !selectedVertex.selected;
+                    isVertexSelected = !isVertexSelected;
+                }
             }
             else {
                 if (!(vertex === selectedVertex)) {
                     selectedVertex.linkToVertex(vertex);
                     vertex.linkToVertex(selectedVertex);
+                }
+                else {
+                    if (!modifyEndPoint && !modifyStartPoint) {
+                        if (vertex.index - 1 === startIndex) {
+                            modifyStartPoint = true;
+                        }
+                        else if (vertex.index - 1 === endIndex) {
+                            modifyEndPoint = true;
+                        }
+                    }
+                    else {
+                        modifyStartPoint = false;
+                        modifyEndPoint = false;
+                    }
                 }
             }
             selectedVertex.selected = !selectedVertex.selected;
@@ -105,6 +140,7 @@ function selectVertices() {
 
     if (!collided) {
         vertices.push(new Vertex(mouseX, mouseY, vertices.length + 1));
+        endIndex = vertices.length - 1;
     }
 }
 
@@ -151,7 +187,7 @@ function graphTraversal(type) {
     let explored = [];
     let vertex = null;
 
-    structure.push([vertices[0], null]);
+    structure.push([vertices[startIndex], null]);
 
     while (structure.length > 0) {
         switch (type) {
@@ -186,7 +222,7 @@ function dijkstras() {
         vertex.distance = Number.MAX_SAFE_INTEGER;
         unvisited.push(vertex);
     }
-    unvisited[0].distance = 0;
+    unvisited[startIndex].distance = 0;
 
     while (unvisited.length > 0) {
         let current = vertexWithShortestDistance(unvisited);
@@ -223,6 +259,8 @@ function createRandomGraph() {
         vertices[i].linkToVertex(vertices[target]);
         vertices[target].linkToVertex(vertices[i]);
     }
+    startIndex = 0;
+    endIndex = vertices.length - 1;
 }
 
 function createCompleteGraph(order) {
@@ -242,6 +280,8 @@ function createCompleteGraph(order) {
             vertices[vertices.length - 1].linkToVertex(vertices[j]);
         }
     }
+    startIndex = 0;
+    endIndex = vertices.length - 1;
 }
 
 function drawEdges() {
@@ -254,7 +294,7 @@ function drawPath() {
     if (showShortestPath) {
         stroke(222, 0, 0);
         strokeWeight(6)
-        let solution = vertices[vertices.length - 1];
+        let solution = vertices[endIndex];
         while (solution.previous != null) {
             line(solution.x, solution.y, solution.previous.x, solution.previous.y);
             solution.partOfSolution = true;
